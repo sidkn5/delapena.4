@@ -7,17 +7,17 @@ static int LabelCntr = 0; /* counting unique labels generated */
 static int NewVarCntr = 0; /* counting unique temporaries generated */
 int varInt = 0;				//pass to gen check
 std::ofstream targetFile;
-//std::vector<token> globalVars;
-//std::vector<token> localVars;
+
+//the stack is in a vector that contains the token and it's scope
 std::vector<tokenStack> varStack;
 static int numOfGlobals = 0;
 
-
+//used for newNames
 typedef enum {
 	VAR, LABEL
 } nameType;
 
-
+//used for scoping
 enum scope {
 	GLOBALSCOPE, LOCALSCOPE
 };
@@ -31,7 +31,7 @@ void generator(Node* node, std::string filename) {
 	targetFile.open(filename);
 
 	if (targetFile) {
-		std::cout << "file.txt created ... \n";
+		std::cout << filename <<" created ... \n";
 
 	}
 	else {
@@ -46,16 +46,11 @@ void generator(Node* node, std::string filename) {
 
 	//get the globals
 	getGlobals(node->child1);
-	//run the precheck
 	generatorCheck(node->child2, varInt);
 
 	//end of the file
 	targetFile << "STOP\n";
-	/*/print the globals
-	for (int i = 0; i < globalVars.size(); i++) {
-		targetFile << globalVars.at(i).tokenString << " 0\n";
-	}*/
-
+	//print the globals
 	for (int i = 0; i < varStack.size(); i++) {
 		if (varStack.at(i).varScope == GLOBALSCOPE) {
 			targetFile << varStack.at(i).tk.tokenString << " 0\n";
@@ -70,7 +65,7 @@ void generator(Node* node, std::string filename) {
 	targetFile.close();
 }
 
-//good
+
 //takes care of the block node
 void generatorCheck(Node *node, int &VarCntr) {
 	if (node == NULL) {
@@ -89,7 +84,6 @@ void generatorCheck(Node *node, int &VarCntr) {
 	}
 }
 
-//good
 //gets the local variables
 void getLocals(Node* node, int& VarCntr) {
 
@@ -99,7 +93,7 @@ void getLocals(Node* node, int& VarCntr) {
 	
 	if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
 		
-		//localVars.push_back(node->token1);
+		//push the token to the stack with a LOCAL SCOPE
 		push(node->token1, LOCALSCOPE);
 		targetFile << "LOAD " << node->token2.tokenString << std::endl;
 		targetFile << "PUSH \n";
@@ -116,16 +110,16 @@ void getGlobals(Node* node) {
 		return;
 	}
 	if (node->token1.type != WSTK && node->token1.type != HOLDERTK){
-		//globalVars.push_back(node->token1);
+		//push the token to the stack with a global scope
 		push(node->token1, GLOBALSCOPE);
-		numOfGlobals++;
+		numOfGlobals++;		//count the number of globals in the stack
 		targetFile << "LOAD " << node->token2.tokenString << "\n";
 		targetFile << "STORE " << node->token1.tokenString << "\n";
 	}
 	getGlobals(node->child1);
 }
 
-//vars, in, stat, mstat, stats, block, program,
+
 void recGen(Node* node, int& VarCntr) {
 	
 	if (node == NULL) {
@@ -135,13 +129,11 @@ void recGen(Node* node, int& VarCntr) {
 	switch (node->funcCalled) {
 		
 		case EXPRNODE:
-			//targetFile << "EXPR ENCOUNTERED\n";
 			if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
 				//call new name
 				std::string newArg;
-				recGen(node->child2, VarCntr);
-
 				newArg = newName(VAR);
+				recGen(node->child2, VarCntr);
 
 				targetFile << "STORE " << newArg << "\n";
 				recGen(node->child1, VarCntr);
@@ -170,6 +162,8 @@ void recGen(Node* node, int& VarCntr) {
 			else {
 				recGen(node->child2, VarCntr);
 			}
+
+			break;
 
 		}
 		// N -> A / N | A * N | A
@@ -215,12 +209,13 @@ void recGen(Node* node, int& VarCntr) {
 
 
 					if (node->token1.type == IDTK) {
-						if (findVar(node->token1) == -1) {
-							targetFile << "LOAD " << node->token1.tokenString << "\n";
+						if (findVar(node->token1) != -1) {
+							targetFile << "STACKR " << findVar(node->token1) << "\n";
 
 						}
 						else {
-							targetFile << "STACKR " << findVar(node->token1) << "\n";
+							targetFile << "LOAD " << node->token1.tokenString << "\n";
+							
 						}
 					}
 					else if (node->token1.type == INTEGERTK) {
@@ -238,7 +233,6 @@ void recGen(Node* node, int& VarCntr) {
 
 		case INNODE: {
 			std::string newArg;
-			//int inNodeTemp = findVar(node->token1);
 			newArg = newName(VAR);
 
 			if (findVar(node->token1) != -1) {
@@ -292,7 +286,7 @@ void recGen(Node* node, int& VarCntr) {
 			if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
 				if (node->token1.type == IDTK)
 					targetFile << node->token1.tokenString << ": NOOP \n";
-					//targetFile << 
+					
 			}
 			break;
 
@@ -334,9 +328,11 @@ void recGen(Node* node, int& VarCntr) {
 
 
 				// check the RO
-				//token2 holds the braces so if token2 is not a right brace then it is the comparison ==
+				//token2 holds the braces so if token2 is not a right brace then it is the comparison == op,
+				//otherwise it is the { == } op
 				if (node->child2->token1.type == EQEQTK && node->child2->token2.type != RIGHTBRACETK) {
-					targetFile << "BRPOS " << newLabel << "\n" << "BRNEG " << newLabel << "\n";
+					targetFile << "BRPOS " << newLabel << "\n";
+					targetFile << "BRNEG " << newLabel << "\n";
 				}
 				else if (node->child2->token1.type == GREATERTHANTK) {
 					targetFile << "BRZNEG " << newLabel << "\n";
@@ -360,11 +356,13 @@ void recGen(Node* node, int& VarCntr) {
 
 
 			}
-		}
 
 			break;
+		}
 
-		//traverse right first 
+			
+
+		//traverse right first then left, then the rest of children
 		case LOOPNODE: {
 			std::string newArg;
 			std::string newLabel;
@@ -423,11 +421,11 @@ void recGen(Node* node, int& VarCntr) {
 
 			}
 
-
+			break;
 		}
 
-			break;
-
+			
+		//traverses other cases not handled above
 		default:
 			recGen(node->child1, VarCntr);
 			recGen(node->child2, VarCntr);
@@ -439,22 +437,9 @@ void recGen(Node* node, int& VarCntr) {
 	}
 }
 
-//find if the element is on the stack
+//find if the element is on the stack, and return the position with in the stack from the head/top
 int findVar(token toke) {
 	int posInStack = 0;
-
-	/*
-	for (int i = localVars.size()-1; i >= 0; i--) {
-		
-		//check if the variable is in the stack, matching with it's scope
-		//targetFile << "local token " << localVars.at(i).tokenString << "\n";
-		//targetFile << "check this  " << toke.tokenString << "\n";
-		if (localVars.at(i).tokenString == toke.tokenString ) {
-			return posInStack;
-		}
-		posInStack++;
-		
-	}*/
 
 	for (int i = varStack.size() - 1; i >=0; i--) {
 		if (varStack.at(i).varScope == LOCALSCOPE) {
@@ -469,7 +454,7 @@ int findVar(token toke) {
 	return -1;
 }
 
-//good
+
 //create a new variable
 std::string newName(int newVar)
 {
@@ -489,11 +474,12 @@ std::string newName(int newVar)
 void popStack(int n) {
 	for (int i = 0; i < n; i++) {
 		targetFile << "POP \n";
-		//localVars.pop_back();
 		varStack.pop_back();
 	}
 }
 
+
+//set the token and scope to be pushed into the stack/vector
 void push(token toke, int scope) {
 	//std::cout << "Pushing variable " << str << std::endl;
 	tokenStack addToken;

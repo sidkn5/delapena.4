@@ -19,9 +19,9 @@
 int main(int argc, char* argv[]){
 
 	std::string filename = "";
+	std::string asmFilename = "";
 	std::ifstream file;
 
-	//std::ofstream createdFile;
 	
 	if (argc > 2) {
 		printf("ERROR: Incorrect use of the program.\n");
@@ -40,10 +40,9 @@ int main(int argc, char* argv[]){
 			getTree(root);
 			
 			//change to asm later
-			
-			generator(root, "file.txt");
+			asmFilename = filename.append(".txt");
+			generator(root, filename);
 
-			//std::cout << "Semantics Passed/Completed...\n";
 		}
 		else {
 			std::cout << "The file does not exist! Terminating...\n";

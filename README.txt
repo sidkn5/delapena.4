@@ -1,13 +1,13 @@
 Student: Sean Dela Pena 
 Professor: Mark Hauschild
-Assignment: Project 5 - CS 4280
+Assignment: Project 4 - CS 4280
 	Code Genration
-Date: 11/28/21
+Date: 12/09/21
 
-OPTION 2 (LOCAL OPTION) (max 100):
-	Variables defined before the program keyword are considered in the global scope, those inside of any block are considered scoped in that block.
+LOCAL OPTION (max 130 + 20):
+	P3 and P4 are both LOCAL options in this project. 
 
-USAGE: make		(makefile to compile, creates a parser executable)
+USAGE: make		(makefile to compile, creates an executable)
 	./compfs [somefile]
 	make clean	
 
@@ -18,6 +18,8 @@ Invocation:
 Any other invocations will result in an error.
 
 Notes:
+	Will produce a "[somefile].asm" file to be ran in the virtual machine.
+
 	The token structure is as shown
 	[token, "string", line num:charNum]
 	["IDTk, "example", line 1:1]
@@ -31,5 +33,9 @@ Notes:
 	or
 	Semantic Error: This variable "var" has NOT been declared.
 
-Important:
 	
+Important:
+	The main.cpp file calls the scanner, the parser, the semantic, then the generator to produce
+	a file named "[somefile].asm" which can be ran in the virtual machine. I decide to leave the sematic
+	check since it doesn't really hurt the program. The generator will still do it's own pass/traversing
+	after the semantic check. 
