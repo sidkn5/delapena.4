@@ -7,3 +7,4 @@ compfs: main.cpp scanner.cpp scanner.hpp character.hpp token.hpp parser.cpp pars
 clean:
 	rm -f *.o compfs
 	rm -f *.gch
+	rm file.txt

@@ -1,6 +1,6 @@
-&& p2g1, smallest program and a good idea to make variants of this with each statement &&
-declare x = 0;
+&& p4t1 : Declaring a variable and using the listen statement &&
+declare x = 5 ;
 program
 start
-listen x ;
+  listen x ;
 stop

@@ -401,7 +401,8 @@ Node* stat() {
 	}
 	else {
 		//should not be able to reach here
-		return NULL;
+		//return NULL;
+		error2();
 	}
 
 	return NULL;
@@ -565,6 +566,8 @@ Node* RO() {
 			tk = scanner();
 
 			if (tk.type == RIGHTBRACETK) {
+				//just added 1 line
+				node->token2 = tk;
 				tk = scanner();
 				return node;
 
@@ -637,3 +640,9 @@ void error(token errorTk, int expectedToken) {
 		" in line " << errorTk.lineNum << "\n";
 	exit(1);
 }
+
+void error2() {
+	std::cout << "Parser Error: Expected a statement. Statment can't be empty.\n";
+	exit(1);
+}
+

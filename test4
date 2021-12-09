@@ -1,17 +1,10 @@
-&& p2g4 : fun with blocks &&
-declare x = 5 ;
-declare dog = 1;
+&&p4t4 : conditional, will obviously need to have variants checking each relational operator &&
+declare y = 5 ;
 program
 start
+   listen y ;
+   if [ y  { == }  0 ] then
    start
-   declare y = 7 ;
-   label dog ;
-   listen x ;
-   stop
-   start
-      start
-         declare cat = 0 ;
-         jump dog ;
-      stop
-   stop
+      talk y ;
+   stop ;
 stop

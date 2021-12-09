@@ -13,11 +13,15 @@
 #include "parser.hpp"
 #include "tree.hpp"
 #include "semantic.hpp"
+#include "codegenerator.hpp"
+
 
 int main(int argc, char* argv[]){
 
 	std::string filename = "";
 	std::ifstream file;
+
+	//std::ofstream createdFile;
 	
 	if (argc > 2) {
 		printf("ERROR: Incorrect use of the program.\n");
@@ -35,7 +39,11 @@ int main(int argc, char* argv[]){
 			//printNode(root, 0);
 			getTree(root);
 			
-			std::cout << "Semantics Passed/Completed...\n";
+			//change to asm later
+			
+			generator(root, "file.txt");
+
+			//std::cout << "Semantics Passed/Completed...\n";
 		}
 		else {
 			std::cout << "The file does not exist! Terminating...\n";

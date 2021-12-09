@@ -1,11 +1,18 @@
-&& p2g5 : first use of expression &&
-&& will want to test many more variations of expressions here &&
-declare x = 5 ;
+&&p4t5 : what does this do?  &&
+declare x = 0 ;
+declare y = 2 ;
+declare z = 0 ;
 program
 start
    listen x ;
-   talk x ;
-   talk 5 ;
-   talk x + 5 ;
-   && talk ( 2 * 3 / 5 + 7 - . 11 + ( 13 * . 17 ) ) ; &&
+   while [ y < x ] 
+   start
+      assign z = x / y ;
+      assign z = x - ( z * y ) ;
+      if [ z == 0 ] 
+      start
+         talk y ;
+      stop ;
+      assign y = y + 1 ;
+   stop ;
 stop
