@@ -155,6 +155,8 @@ void recGen(Node* node, int& VarCntr) {
 				generatorCheck(node->child2, VarCntr);
 				targetFile << "STORE " << newArg << "\n";
 				generatorCheck(node->child1, VarCntr);
+
+				
 				if (node->token1.type == MINUSTK) {
 					targetFile << "SUB " << newArg << "\n";
 				}
@@ -168,8 +170,7 @@ void recGen(Node* node, int& VarCntr) {
 				  break;
 		// N -> A / N | A * N | A
 		case NNODE: {
-			
-			if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
+			if (node->token1.type == MULTIPLYTK || node->token1.type == DIVIDETK) {
 				std::string newArg;
 				newArg = newName(VAR);
 				generatorCheck(node->child2, VarCntr);

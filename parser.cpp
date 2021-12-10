@@ -177,7 +177,9 @@ Node* N() {
 	node->child1 = A();
 
 	if (tk.type == DIVIDETK || tk.type == MULTIPLYTK) {
+		//std::cout << "inside if N\n";
 		node->token1 = tk;			//consume operator
+		//std::cout << "token " << node->token1.tokenString << "\n";
 		tk = scanner();
 		node->child2 = N();
 	}
@@ -209,12 +211,13 @@ Node* A() {
 
 //<M> -> . <M> | <R>
 Node* M() {
-
+	
 	Node* node = getNode(MNODE);
 	if (tk.type == DOTTK) {
 		node->token1 = tk;			//consume operator
 		tk = scanner();
 		node->child1 = M();
+		std::cout << "dot here\n";
 		return node;
 	}
 	else {
@@ -231,6 +234,7 @@ Node* R() {
 
 	Node* node = getNode(RNODE);
 	if (tk.type == LEFTPARENTK) {
+		node->token1 = tk;
 		tk = scanner();
 		node->child1 = expr();
 
@@ -240,6 +244,7 @@ Node* R() {
 		else {
 			error(tk, RIGHTPARENTK);
 		}
+		return node;
 	}
 	else if (tk.type == IDTK) {
 		node->token1 = tk;		//consume operator
@@ -510,7 +515,6 @@ Node* loop() {
 
 //<assign> -> assign Identifier  = <expr>  
 Node* assign() {
-	//std::cout << "assign called \n";
 
 	Node* node = getNode(ASSIGNNODE);
 	if (tk.type == IDTK) {
@@ -525,12 +529,13 @@ Node* assign() {
 		else {
 			error(tk, EQUALTK);		//expected EQUAL token
 		}
+		
 	}
 	else {
 		error(tk, IDTK);		//expected ID token
 	}
 
-	return NULL;
+	return node;
 
 }
 

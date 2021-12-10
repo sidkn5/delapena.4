@@ -1,0 +1,10 @@
+LOAD 0
+STORE x
+LOAD 2
+STORE y
+LOAD 0
+STORE z
+STOP
+x 0
+y 0
+z 0

@@ -1,9 +1,8 @@
-declare x = 5 ;
-declare pp = 69;
+&&p4t5 : what does this do?  &&
+declare x = 0 ;
+declare y = 2 ;
+declare z = 0 ;
 program
 start
-   declare x = 1;
-   declare y = 2;
-   talk x;
-   talk pp;
+   assign x = 5 - 6;
 stop
