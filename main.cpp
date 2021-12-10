@@ -1,12 +1,13 @@
 /*Student: Sean Dela Pena
- *Assignment P3 - Semantics
+ *Assignment P4 - Code Generator
  *Professor: Mark Hauschild
  *Class: CS 4280
- *Date: 11-28-21
+ *Date: 12-10-21
  * 
  * File: main.cpp
  * This file handles the arguments, calls the scanner, calls the parser, calls getTree which sets the 
- * tree and then calls semantic() to check the semantics of the tree.
+ * tree and then calls semantic() to check the semantics of the tree. Then it calls the generator which 
+ * which generates the machine code into a target file.
  */
 
 #include "scanner.hpp"
@@ -40,7 +41,7 @@ int main(int argc, char* argv[]){
 			getTree(root);
 			
 			//change to asm later
-			asmFilename = filename.append(".txt");
+			asmFilename = filename.append(".asm");
 			generator(root, filename);
 
 		}

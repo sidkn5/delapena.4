@@ -133,17 +133,17 @@ void recGen(Node* node, int& VarCntr) {
 				//call new name
 				std::string newArg;
 				newArg = newName(VAR);
-				recGen(node->child2, VarCntr);
+				generatorCheck(node->child2, VarCntr);
 
 				targetFile << "STORE " << newArg << "\n";
-				recGen(node->child1, VarCntr);
+				generatorCheck(node->child1, VarCntr);
 				if (node->token1.type == PLUSTK) {
 					targetFile << "ADD " << newArg << "\n";
 				}
 				
 			}
 			else {
-				recGen(node->child1, VarCntr);
+				generatorCheck(node->child1, VarCntr);
 			}
 			break;
 
@@ -152,31 +152,31 @@ void recGen(Node* node, int& VarCntr) {
 			if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
 				std::string newArg;
 				newArg = newName(VAR);
-				recGen(node->child2, VarCntr);
+				generatorCheck(node->child2, VarCntr);
 				targetFile << "STORE " << newArg << "\n";
+				generatorCheck(node->child1, VarCntr);
 				if (node->token1.type == MINUSTK) {
 					targetFile << "SUB " << newArg << "\n";
 				}
 				
 			}
 			else {
-				recGen(node->child2, VarCntr);
+				generatorCheck(node->child1, VarCntr);
 			}
 
-			break;
-
 		}
+				  break;
 		// N -> A / N | A * N | A
 		case NNODE: {
 			
 			if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
 				std::string newArg;
 				newArg = newName(VAR);
-				recGen(node->child2, VarCntr);
+				generatorCheck(node->child2, VarCntr);
 
 				
 				targetFile << "STORE " << newArg << "\n";
-				recGen(node->child1, VarCntr);
+				generatorCheck(node->child1, VarCntr);
 				if (node->token1.type == MULTIPLYTK) {
 					targetFile << "MULT " << newArg << "\n";
 				}
@@ -185,15 +185,16 @@ void recGen(Node* node, int& VarCntr) {
 				}
 			}
 			else {
-				recGen(node->child1, VarCntr);
+				generatorCheck(node->child1, VarCntr);
 			}
 
-			break;
+			
 		}
+				  break;
 
 		
 		case MNODE: 
-			recGen(node->child1, VarCntr);
+			generatorCheck(node->child1, VarCntr);
 			if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
 				if (node->token1.type == DOTTK) {
 					targetFile << "MULT -1 \n";
@@ -203,19 +204,19 @@ void recGen(Node* node, int& VarCntr) {
 			break;
 
 		case RNODE: 
-			//printStack();
+			//targetFile << "In the RNODE" << "\n";
 			if (node->token1.type != WSTK && node->token1.type != HOLDERTK) {
 				if (node->child1 == NULL) {
-
-
+					
 					if (node->token1.type == IDTK) {
-						if (findVar(node->token1) != -1) {
-							targetFile << "STACKR " << findVar(node->token1) << "\n";
-
+						
+						if (findVar(node->token1) == -1) {
+							
+							targetFile << "LOAD " << node->token1.tokenString << "\n";
 						}
 						else {
-							targetFile << "LOAD " << node->token1.tokenString << "\n";
 							
+							targetFile << "STACKR " << findVar(node->token1) << "\n";
 						}
 					}
 					else if (node->token1.type == INTEGERTK) {
@@ -224,7 +225,7 @@ void recGen(Node* node, int& VarCntr) {
 
 				}
 				else {
-					recGen(node->child1, VarCntr);
+					generatorCheck(node->child1, VarCntr);
 				}
 
 			}
@@ -244,29 +245,31 @@ void recGen(Node* node, int& VarCntr) {
 				targetFile << "READ " << node->token1.tokenString << "\n";
 			}
 			
-			break;
+			
 		}
+				   break;
 
 		case OUTNODE: {
 			std::string newArg;
-			recGen(node->child1, VarCntr);
+			generatorCheck(node->child1, VarCntr);
 			newArg = newName(VAR);
 			targetFile << "STORE " << newArg << "\n";
 			targetFile << "WRITE " << newArg << "\n";
 
-			break;
+			
 		}
+					break;
 			
 
 
 		// assign ID = <expr>
 		case ASSIGNNODE:
 			if (findVar(node->token1) != -1) {
-				recGen(node->child1, VarCntr);
+				generatorCheck(node->child1, VarCntr);
 				targetFile << "STACKW " << findVar(node->token1) << "\n";
 			}
 			else {
-				recGen(node->child1, VarCntr);
+				generatorCheck(node->child1, VarCntr);
 				targetFile << "STORE " << node->token1.tokenString << "\n";
 			}
 			
@@ -357,9 +360,9 @@ void recGen(Node* node, int& VarCntr) {
 
 			}
 
-			break;
+			
 		}
-
+					   break;
 			
 
 		//traverse right first then left, then the rest of children
@@ -415,29 +418,32 @@ void recGen(Node* node, int& VarCntr) {
 					targetFile << "BRZERO " << anotherLabel << "\n";
 				}
 
-				recGen(node->child4, VarCntr);
+				generatorCheck(node->child4, VarCntr);
 				targetFile << "BR " << newLabel << "\n";
 				targetFile <<  anotherLabel << ": NOOP\n";
 
 			}
 
-			break;
+			
 		}
+					 break;
 
 			
 		//traverses other cases not handled above
 		default:
-			recGen(node->child1, VarCntr);
-			recGen(node->child2, VarCntr);
-			recGen(node->child3, VarCntr);
-			recGen(node->child4, VarCntr);
-			recGen(node->child5, VarCntr);
+
+			generatorCheck(node->child1, VarCntr);
+			generatorCheck(node->child2, VarCntr);
+			generatorCheck(node->child3, VarCntr);
+			generatorCheck(node->child4, VarCntr);
+			generatorCheck(node->child5, VarCntr);
 			break;
 
 	}
 }
 
 //find if the element is on the stack, and return the position with in the stack from the head/top
+//must be a local scope
 int findVar(token toke) {
 	int posInStack = 0;
 
@@ -481,19 +487,12 @@ void popStack(int n) {
 
 //set the token and scope to be pushed into the stack/vector
 void push(token toke, int scope) {
-	//std::cout << "Pushing variable " << str << std::endl;
 	tokenStack addToken;
 	addToken.tk = toke;
 	addToken.varScope = scope;
 	varStack.push_back(addToken);
 	return;
 }
-/*
-void printStack() {
-	for (int i = 0; i < localVars.size(); i++) {
-		targetFile << localVars.at(i).tokenString << " \n";
-	}
-	std::cout << "\n";
-}*/
+
 
 

@@ -1,10 +1,12 @@
+Storage = Local
+
 Student: Sean Dela Pena 
 Professor: Mark Hauschild
 Assignment: Project 4 - CS 4280
 	Code Genration
 Date: 12/09/21
 
-LOCAL OPTION (max 130 + 20):
+LOCAL OPTION (130 + 20):
 	P3 and P4 are both LOCAL options in this project. 
 
 USAGE: make		(makefile to compile, creates an executable)
@@ -36,6 +38,6 @@ Notes:
 	
 Important:
 	The main.cpp file calls the scanner, the parser, the semantic, then the generator to produce
-	a file named "[somefile].asm" which can be ran in the virtual machine. I decide to leave the sematic
+	a file named "[somefile].asm" which can be ran in the virtual machine. I decided to leave the sematic
 	check since it doesn't really hurt the program. The generator will still do it's own pass/traversing
 	after the semantic check. 

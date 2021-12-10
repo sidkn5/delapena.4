@@ -1,15 +1,9 @@
-declare y = 5 ;
+declare x = 5 ;
+declare pp = 69;
 program
 start
-   declare a = 2;
-   if [ y { == } 0 ] then
-   start
-      declare y = 2;
-      declare z = 9;
-      listen y ;
-      listen a;
-      assign z = y;
-   stop ;
-   listen a;
-   talk y;
+   declare x = 1;
+   declare y = 2;
+   talk x;
+   talk pp;
 stop

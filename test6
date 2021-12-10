@@ -1,12 +1,20 @@
-&& p2g6 : a loop, will obviously need to have variants checking each relational operator &&
-declare x = 0 ;
+declare b = 7;
+declare a = 1;
+declare y = 2;
 program
 start
-   while [ x == 0 ]
    start
-      listen x ;
+      declare s = 7 ;
+      declare x = 8 ;
       talk x ;
-   stop ;
+      talk s ;
+   stop
+   start
+      start
+         declare x = 0 ;
+         declare a = 2;
+         talk a ;
+         talk x ;
+      stop
+   stop
 stop
-
-&&
